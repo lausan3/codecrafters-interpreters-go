@@ -94,6 +94,8 @@ func (s *Scanner) scanToken() (ok bool) {
 		} else {
 			fmt.Println("SLASH / null")
 		}
+	case '\t', ' ', '\n':
+		return true
 	default:
 		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
 		return false
