@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/codecrafters-io/interpreter-starter-go/cmd/myinterpreter/lox"
 )
 
 func main() {
@@ -30,31 +32,7 @@ func main() {
 	}
 
 	fileContents := string(rawFileContents)
-	for _, char := range fileContents {
+	scanner := &lox.Scanner{FileContents: fileContents}
 
-		switch char {
-		case '(':
-			fmt.Println("LEFT_PAREN ( null")
-		case ')':
-			fmt.Println("RIGHT_PAREN ) null")
-		case '{':
-			fmt.Println("LEFT_BRACE { null")
-		case '}':
-			fmt.Println("RIGHT_BRACE } null")
-		case '.':
-			fmt.Println("DOT . null")
-		case ',':
-			fmt.Println("COMMA , null")
-		case '+':
-			fmt.Println("PLUS + null")
-		case '-':
-			fmt.Println("MINUS - null")
-		case ';':
-			fmt.Println("SEMICOLON ; null")
-		case '*':
-			fmt.Println("STAR * null")
-		}
-	}
-
-	fmt.Println("EOF  null")
+	scanner.ScanTokens()
 }
