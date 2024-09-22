@@ -6,41 +6,84 @@ import (
 )
 
 type Scanner struct {
-	FileContents string
+	Source  string
+	Current int
+	Start   int
+	Line    int
 }
 
 func (s *Scanner) ScanTokens() {
 	sawBadRune := false
-	for _, char := range s.FileContents {
-		switch char {
-		case '(':
-			fmt.Println("LEFT_PAREN ( null")
-		case ')':
-			fmt.Println("RIGHT_PAREN ) null")
-		case '{':
-			fmt.Println("LEFT_BRACE { null")
-		case '}':
-			fmt.Println("RIGHT_BRACE } null")
-		case '.':
-			fmt.Println("DOT . null")
-		case ',':
-			fmt.Println("COMMA , null")
-		case '+':
-			fmt.Println("PLUS + null")
-		case '-':
-			fmt.Println("MINUS - null")
-		case ';':
-			fmt.Println("SEMICOLON ; null")
-		case '*':
-			fmt.Println("STAR * null")
-		default:
-			fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", char)
+	s.Current = 0
+	s.Line = 1
+
+	for !s.isAtEnd() {
+		s.Start = s.Current
+		if !s.scanToken() {
 			sawBadRune = true
 		}
 	}
+
 	fmt.Println("EOF  null")
 
 	if sawBadRune {
 		os.Exit(65)
 	}
+}
+
+func (s *Scanner) scanToken() (ok bool) {
+	char := s.advance()
+
+	switch char {
+	case '(':
+		fmt.Println("LEFT_PAREN ( null")
+	case ')':
+		fmt.Println("RIGHT_PAREN ) null")
+	case '{':
+		fmt.Println("LEFT_BRACE { null")
+	case '}':
+		fmt.Println("RIGHT_BRACE } null")
+	case '.':
+		fmt.Println("DOT . null")
+	case ',':
+		fmt.Println("COMMA , null")
+	case '+':
+		fmt.Println("PLUS + null")
+	case '-':
+		fmt.Println("MINUS - null")
+	case ';':
+		fmt.Println("SEMICOLON ; null")
+	case '*':
+		fmt.Println("STAR * null")
+	case '=':
+		if s.match('=') {
+			fmt.Println("EQUAL_EQUAL == null")
+		} else {
+			fmt.Println("EQUAL = null")
+		}
+	default:
+		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
+		return false
+	}
+
+	return true
+}
+
+func (s *Scanner) advance() rune {
+	currentRune := rune(s.Source[s.Current])
+	s.Current += 1
+	return currentRune
+}
+
+func (s *Scanner) match(expected rune) bool {
+	if s.isAtEnd() || s.Source[s.Current] != byte(expected) {
+		return false
+	}
+
+	s.Current += 1
+	return true
+}
+
+func (s *Scanner) isAtEnd() bool {
+	return s.Current >= len(s.Source)
 }
