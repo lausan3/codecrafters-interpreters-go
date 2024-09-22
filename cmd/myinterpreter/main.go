@@ -31,7 +31,7 @@ func main() {
 
 	if len(fileContents) > 0 {
 		for current := range fileContents {
-			char := string(current)
+			char := string(fileContents[current])
 
 			switch char {
 			case "(":
