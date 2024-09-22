@@ -61,6 +61,12 @@ func (s *Scanner) scanToken() (ok bool) {
 		} else {
 			fmt.Println("EQUAL = null")
 		}
+	case '!':
+		if s.match('=') {
+			fmt.Println("BANG_EQUAL != null")
+		} else {
+			fmt.Println("BANG ! null")
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
 		return false
