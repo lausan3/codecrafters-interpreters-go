@@ -12,6 +12,7 @@ type Scanner struct {
 	Line    int
 }
 
+// Scan the source string for its tokens.
 func (s *Scanner) ScanTokens() {
 	sawBadRune := false
 	s.Current = 0
@@ -31,6 +32,7 @@ func (s *Scanner) ScanTokens() {
 	}
 }
 
+// Scan the current token in the source string and return whether we recognized it.
 func (s *Scanner) scanToken() (ok bool) {
 	char := s.advance()
 
@@ -67,6 +69,18 @@ func (s *Scanner) scanToken() (ok bool) {
 		} else {
 			fmt.Println("BANG ! null")
 		}
+	case '<':
+		if s.match('=') {
+			fmt.Println("LESS_EQUAL <= null")
+		} else {
+			fmt.Println("LESS < null")
+		}
+	case '>':
+		if s.match('=') {
+			fmt.Println("GREATER_EQUAL >= null")
+		} else {
+			fmt.Println("GREATER > null")
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
 		return false
@@ -75,12 +89,14 @@ func (s *Scanner) scanToken() (ok bool) {
 	return true
 }
 
+// Return the rune at the current pointer and advance the pointer to the next index.
 func (s *Scanner) advance() rune {
 	currentRune := rune(s.Source[s.Current])
 	s.Current += 1
 	return currentRune
 }
 
+// Match the next rune with an expected one.
 func (s *Scanner) match(expected rune) bool {
 	if s.isAtEnd() || s.Source[s.Current] != byte(expected) {
 		return false
@@ -90,6 +106,7 @@ func (s *Scanner) match(expected rune) bool {
 	return true
 }
 
+// Checks if the current pointer is not at the end of source string.
 func (s *Scanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
 }
