@@ -81,6 +81,19 @@ func (s *Scanner) scanToken() (ok bool) {
 		} else {
 			fmt.Println("GREATER > null")
 		}
+	case '/':
+		// Ignore comments
+		if s.match('/') {
+			for !s.isAtEnd() {
+				if s.advance() == '\n' {
+					break
+				}
+			}
+
+			s.Line += 1
+		} else {
+			fmt.Println("SLASH / null")
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
 		return false
