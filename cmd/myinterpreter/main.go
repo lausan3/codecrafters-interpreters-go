@@ -23,24 +23,22 @@ func main() {
 
 	// Tokenize command
 	filename := os.Args[2]
-	fileContents, err := os.ReadFile(filename)
+	rawFileContents, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
 		os.Exit(1)
 	}
 
-	if len(fileContents) > 0 {
-		for current := range fileContents {
-			char := string(fileContents[current])
+	fileContents := string(rawFileContents)
+	for _, char := range fileContents {
 
-			switch char {
-			case "(":
-				fmt.Println("LEFT_PAREN ( null")
-			case ")":
-				fmt.Println("RIGHT_PAREN ) null")
-			}
+		switch char {
+		case '(':
+			fmt.Println("LEFT_PAREN ( null")
+		case ')':
+			fmt.Println("RIGHT_PAREN ) null")
 		}
-
-		fmt.Println("EOF  null") // Placeholder, remove this line when implementing the scanner
 	}
+
+	fmt.Println("EOF  null")
 }
