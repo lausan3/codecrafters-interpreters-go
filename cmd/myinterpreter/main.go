@@ -32,7 +32,7 @@ func main() {
 	}
 
 	fileContents := string(rawFileContents)
-	scanner := &lox.Scanner{Source: fileContents}
+	scanner := lox.NewScanner(fileContents)
 
 	scanner.ScanTokens()
 }

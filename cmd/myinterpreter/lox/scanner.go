@@ -5,15 +5,19 @@ import (
 	"os"
 )
 
-type Scanner struct {
+type scanner struct {
 	Source  string
 	Current int
 	Start   int
 	Line    int
 }
 
+func NewScanner(source string) *scanner {
+	return &scanner{Source: source}
+}
+
 // Scan the source string for its tokens.
-func (s *Scanner) ScanTokens() {
+func (s *scanner) ScanTokens() {
 	sawBadRune := false
 	s.Current = 0
 	s.Line = 1
@@ -33,7 +37,7 @@ func (s *Scanner) ScanTokens() {
 }
 
 // Scan the current token in the source string and return whether we recognized it.
-func (s *Scanner) scanToken() (ok bool) {
+func (s *scanner) scanToken() (ok bool) {
 	char := s.advance()
 
 	switch char {
@@ -84,20 +88,18 @@ func (s *Scanner) scanToken() (ok bool) {
 	case '/':
 		// Ignore comments
 		if s.match('/') {
-			for !s.isAtEnd() {
-				if s.advance() == '\n' {
-					break
-				}
+			for s.peek() != '\n' && !s.isAtEnd() {
+				s.advance()
+				// fmt.Printf("skipping comment %c\n", chr)
 			}
-
-			s.Line += 1
 		} else {
 			fmt.Println("SLASH / null")
 		}
-	case '\t', ' ', '\n':
-		return true
+	case '\t', ' ':
+	case '\n':
+		s.Line++
 	default:
-		fmt.Fprintf(os.Stderr, "[line %b] Error: Unexpected character: %c\n", s.Line, char)
+		fmt.Fprintf(os.Stderr, "[line %d] Error: Unexpected character: %c\n", s.Line, char)
 		return false
 	}
 
@@ -105,14 +107,14 @@ func (s *Scanner) scanToken() (ok bool) {
 }
 
 // Return the rune at the current pointer and advance the pointer to the next index.
-func (s *Scanner) advance() rune {
+func (s *scanner) advance() rune {
 	currentRune := rune(s.Source[s.Current])
 	s.Current += 1
 	return currentRune
 }
 
 // Match the next rune with an expected one.
-func (s *Scanner) match(expected rune) bool {
+func (s *scanner) match(expected rune) bool {
 	if s.isAtEnd() || s.Source[s.Current] != byte(expected) {
 		return false
 	}
@@ -122,6 +124,15 @@ func (s *Scanner) match(expected rune) bool {
 }
 
 // Checks if the current pointer is not at the end of source string.
-func (s *Scanner) isAtEnd() bool {
+func (s *scanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
+}
+
+// Return the next rune in the source string, else return a space.
+func (s *scanner) peek() rune {
+	if s.isAtEnd() {
+		return ' '
+	}
+
+	return rune(s.Source[s.Current])
 }
